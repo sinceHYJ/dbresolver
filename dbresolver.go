@@ -26,6 +26,7 @@ type Config struct {
 	Sources           []gorm.Dialector
 	Replicas          []gorm.Dialector
 	Policy            Policy
+	SourcePolicy      Policy
 	datas             []interface{}
 	TraceResolverMode bool
 }
@@ -44,6 +45,10 @@ func (dr *DBResolver) Register(config Config, datas ...interface{}) *DBResolver 
 	}
 
 	if config.Policy == nil {
+		config.Policy = RandomPolicy{}
+	}
+
+	if config.SourcePolicy == nil {
 		config.Policy = RandomPolicy{}
 	}
 
@@ -84,6 +89,7 @@ func (dr *DBResolver) compileConfig(config Config) (err error) {
 		r        = resolver{
 			dbResolver:        dr,
 			policy:            config.Policy,
+			sourcePolicy:      config.SourcePolicy,
 			traceResolverMode: config.TraceResolverMode,
 		}
 	)

@@ -8,6 +8,7 @@ type resolver struct {
 	sources           []gorm.ConnPool
 	replicas          []gorm.ConnPool
 	policy            Policy
+	sourcePolicy      Policy
 	dbResolver        *DBResolver
 	traceResolverMode bool
 }
@@ -28,7 +29,7 @@ func (r *resolver) resolve(stmt *gorm.Statement, op Operation) (connPool gorm.Co
 			markStmtResolverMode(stmt, ResolverModeSource)
 		}
 	} else {
-		connPool = r.policy.Resolve(r.sources)
+		connPool = r.sourcePolicy.Resolve(r.sources)
 		if r.traceResolverMode {
 			markStmtResolverMode(stmt, ResolverModeSource)
 		}
